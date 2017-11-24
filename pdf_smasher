@@ -1,0 +1,54 @@
+from tkinter import *
+from pathlib import Path
+from os import listdir
+from os.path import isfile, join
+from PyPDF2 import PdfFileMerger
+
+
+class pdf_tool(object):
+    def __init__(self):
+        (self.source_loc_options,self.source_locs_clean) = self.get_source_locations()
+        while True:
+            inp = input(self.source_locs_clean)
+            if inp in self.source_loc_options.keys():
+                break
+        self.source_loc = self.source_loc_options[inp]
+        self.dest_loc = self.set_output_loc()
+
+    def get_source_locations(self):
+        source_pdf_file = '/home/cameron/pdf_project/pdf_source_locations.txt'
+        j = {} #['Custom']
+        inputFile = open(source_pdf_file,'r')
+        ct = 1
+        for line in inputFile:
+            j[str(ct)] = line
+            ct += 1
+        myStr = 'Enter the # of the following source folders:\n'
+        for x in range(ct-1):
+            print (myStr)
+            myStr += '%s: %s\n' % (x+1,j[str(x+1)])
+        #for k,v in j.items():
+        #    myStr += '%s: %s\n' % (k,v)
+        return (j,myStr)
+
+    def set_output_loc(self):
+        home = str(Path.home()) + '/'
+        return home
+
+    def filesInFolder(self,mypath):
+        print (mypath)
+        return [mypath+f for f in listdir(mypath) if isfile(join(mypath, f))]
+
+    def pdfSmasher(self):
+        myDir = self.source_loc.rstrip()
+        pdfs = [myDir+f for f in listdir(myDir) if isfile(join(myDir, f))]#self.filesInFolder(myDir)
+        merger = PdfFileMerger()
+        for pdf in pdfs:
+            merger.append(pdf)
+        outputFile = 'result.pdf'
+        merger.write(self.dest_loc+outputFile)
+        print ('Combined PDF now available at: %s' % (self.dest_loc))
+
+
+x = pdf_tool()
+x.pdfSmasher()
