@@ -8,6 +8,7 @@ class pdf_tool(object):
     def __init__(self):
         (self.source_loc_options,self.source_locs_clean) = self.get_source_locations()
         while True:
+            #ensures the users entry exists in the list of files
             inp = input(self.source_locs_clean)
             if inp in self.source_loc_options.keys():
                 break
@@ -15,6 +16,7 @@ class pdf_tool(object):
         self.dest_loc = self.set_output_loc()
 
     def get_source_locations(self):
+        #text file that lives on your computer somewhere, with a list of locations where the PDFs exist
         source_pdf_file = '/home/cameron/pdf_project/pdf_source_locations.txt'
         j = {} #['Custom']
         inputFile = open(source_pdf_file,'r')
@@ -31,14 +33,17 @@ class pdf_tool(object):
         return (j,myStr)
 
     def set_output_loc(self):
+        #where you want the final PDF published - default is your desktop
         home = str(Path.home()) + '/'
         return home
 
     def filesInFolder(self,mypath):
+        #loop through all PDFs in specified folder and add them to a list
         print (mypath)
         return [mypath+f for f in listdir(mypath) if isfile(join(mypath, f))]
 
     def pdfSmasher(self):
+        #a new line was added at end of string, this removes it
         myDir = self.source_loc.rstrip()
         pdfs = [myDir+f for f in listdir(myDir) if isfile(join(myDir, f))]#self.filesInFolder(myDir)
         merger = PdfFileMerger()
